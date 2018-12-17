@@ -3,21 +3,34 @@ services:
   mongo:
     image: mongo
     ports:
-    - 27017:27017
+      - 27017:27017
     volumes:
-    - ./data/db:/data/db
+      - ./data/db:/data/db
+    networks:
+    - compose-mongo-fileupload-bridge
   mongo-client:
     image: mongoclient/mongoclient
     ports:
-    - 3030:3000
+      - 3030:3000
     environment:
-      - MONGOCLIENT_DEFAULT_CONNECTION_URL=mongodb://mongo:27017
+      - MONGO_URL=mongodb://mongo:27017
+    volumes:
+      - ./mongoclient/db:/data/db
     links:
       - mongo
+    networks:
+      - compose-mongo-fileupload-bridge
   spring-boot-mongo-docker:
     image: adolphgirl/tomcatwar
     ports:
-    - 8080:8080
+      - 8080:8080
+    volumes:
+      - ./tomcat/logs:/opt/tomcat
+        ./tomcat/hsperfdata_root:/tmp/hsperfdata_root
     links:
-    - mongo
+      - mongo
+    networks:
+      - compose-mongo-fileupload-bridge
+networks:
+  compose-mongo-fileupload-bridge:
         
