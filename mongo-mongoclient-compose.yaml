@@ -1,0 +1,23 @@
+version: "2"  # 2.x 和3.x的最大差異，2.x用於佈署單機、3.x用於佈署docker-swarm
+services:
+  mongo:
+    image: mongo
+    ports:
+    - 27017:27017
+    volumes:
+    - ./data/db:/data/db
+    networks:
+      - compose-mongo-bridge
+  mongo-client:
+    image: mongoclient/mongoclient
+    ports:
+    - 3030:3000
+    environment:
+      - MONGO_URL=mongodb://mongo:27017
+    links:
+      - mongo
+    networks:
+      - compose-mongo-bridge
+networks:
+  compose-mongo-bridge:
+  
